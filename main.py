@@ -22,4 +22,4 @@ def create_global_csv(path):
     df.to_csv(path,
               sep='|', encoding='utf-8', header=True, index=False)
 
-#create_global_csv(r'C:\Users\timot\OneDrive\Documents\L3\machine_learning\projectMastercamp\VFglobal.csv')
+create_global_csv(r'C:\Users\timot\OneDrive\Documents\L3\machine_learning\projectMastercamp\VFglobal.csv')
