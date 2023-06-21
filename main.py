@@ -55,7 +55,7 @@ create_global_csv(r'C:\Users\meder\Desktop\chromedriver\VFglobal.csv')
 df = pd.read_csv("C:\\Users\\meder\Desktop\\chromedriver\\VFglobal.csv", sep='|', header=0, low_memory=False)
 print(df.info())
 df_corr = df.corr()
-print("testttt", df_corr.unstack()[(df_corr.unstack() < 0.7)].nlargest(20))
+print("grande correlation", df_corr.unstack()[(df_corr.unstack() < 1)].nlargest(20))
 
 print(df_corr)
 print(df.shape)
