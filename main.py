@@ -1,15 +1,25 @@
 import pandas as pd
 
-# Initialize an empty list
-chunks = []
 
-# Iterate over the files and append chunks to the list
-for i in range(18, 23):
-    filename = f"valeursfoncieres-20{i}.txt"
-    chunk = pd.read_csv(filename, sep='|', header=0, low_memory=False)
-    chunks.append(chunk)
+def create_global_csv(path):
+    # Initialize an empty list
+    chunks = []
 
-# Concatenate the chunks into a single DataFrame
-df = pd.concat(chunks)
+    # Iterate over the files and append chunks to the list
+    for i in range(18, 23):
+        filename = f"valeursfoncieres-20{i}.txt"
+        columns_to_drop = ['Identifiant de document', 'Reference document', '1 Articles CGI', '2 Articles CGI',
+                           '3 Articles CGI',
+                           '4 Articles CGI', '5 Articles CGI', 'Code voie', 'Voie', 'Commune',
+                           'Identifiant local','Type local']
+        chunk = pd.read_csv(filename, sep='|', header=0, low_memory=False)
+        chunk.drop(columns_to_drop, axis=1, inplace=True)
 
-print(df.shape)
+        chunks.append(chunk)
+
+    # Concatenate the chunks into a single DataFrame
+    df = pd.concat(chunks)
+    df.to_csv(path,
+              sep='|', encoding='utf-8', header=True, index=False)
+
+#create_global_csv(r'C:\Users\timot\OneDrive\Documents\L3\machine_learning\projectMastercamp\VFglobal.csv')
