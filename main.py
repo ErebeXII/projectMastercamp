@@ -1,14 +1,18 @@
 import pandas as pd
 from clear_data import remplace_text, remplace_date, string_to_float_number, string_to_int
-
+import os
+import graphics
 
 def create_global_csv(path):
+    print("Creating global csv...")
     # Initialize an empty list
     chunks = []
 
     # Iterate over the files and append chunks to the list
     for i in range(18, 23):
-        print(i)
+
+        print(f"Processing file: valeursfoncieres-20{i}.txt")
+
         filename = f"valeursfoncieres-20{i}.txt"
         columns_to_drop = ['Identifiant de document', 'Reference document', '1 Articles CGI', '2 Articles CGI',
                            '3 Articles CGI',
@@ -25,39 +29,41 @@ def create_global_csv(path):
         chunks.append(chunk)
 
     # Concatenate the chunks into a single DataFrame
-
+    print("Cleaning non numeric values...")
     df = pd.concat(chunks)
     df = df.fillna(0)
-    df = remplace_text(df, 'Type de voie')
-    df = remplace_text(df, 'Nature mutation')
-    df = remplace_text(df, 'Nature culture')
-    df = remplace_text(df, 'Nature culture speciale')
-    df = remplace_text(df, 'B/T/Q')
-    df = remplace_text(df, 'Section')
-    df = string_to_int(df, 'No Volume')
-    df = string_to_int(df, '1er lot')
-    df = string_to_int(df, '2eme lot')
-    df = string_to_int(df, '3eme lot')
-    df = string_to_int(df, '4eme lot')
-    df = string_to_int(df, '5eme lot')
+
+    for col in ['Type de voie', 'Nature mutation', 'Nature culture',
+                'Nature culture speciale', 'B/T/Q', 'Section']:
+        df = remplace_text(df, col)
+
+    for col in ['No Volume', '1er lot',
+                '2eme lot', '3eme lot', '4eme lot', '5eme lot']:
+        df = string_to_int(df, col)
+
+    for col in ['Valeur fonciere', 'Surface Carrez du 1er lot', 'Surface Carrez du 2eme lot',
+                'Surface Carrez du 3eme lot', 'Surface Carrez du 4eme lot', 'Surface Carrez du 5eme lot']:
+         df = string_to_float_number(df, col)
+
     df = remplace_date(df)
-    df = string_to_float_number(df, 'Valeur fonciere')
-    df = string_to_float_number(df, 'Surface Carrez du 1er lot')
-    df = string_to_float_number(df, 'Surface Carrez du 2eme lot')
-    df = string_to_float_number(df, 'Surface Carrez du 3eme lot')
-    df = string_to_float_number(df, 'Surface Carrez du 4eme lot')
-    df = string_to_float_number(df, 'Surface Carrez du 5eme lot')
 
     df.to_csv(path, sep='|', encoding='utf-8', header=True, index=False)
+    print("Global csv created !")
 
-create_global_csv(r'C:\Users\nothy\PycharmProjects\projectMastercamp\VFglobal.csv')
+path = r'C:\Users\timot\OneDrive\Documents\L3\machine_learning\projectMastercamp\VFglobal.csv'
 
-df = pd.read_csv("C:\\Users\\nothy\\PycharmProjects\\projectMastercamp\\VFglobal.csv", sep='|', header=0, low_memory=False)
-print(df.info())
-df_corr = df.corr()
-print("grande correlation", df_corr.unstack()[(df_corr.unstack() < 1)].nlargest(20))
+if not os.path.exists(path):
+    create_global_csv(path)
 
-print(df_corr)
-print(df.shape)
 
-print(df_corr.loc['Valeur fonciere'])
+df = pd.read_csv(path, sep='|', header=0, low_memory=False)
+graphics.plot_corr(df, 0.3)
+
+# print(df.info())
+# df_corr = df.corr()
+# print("grande correlation", df_corr.unstack()[(df_corr.unstack() < 1)].nlargest(20))
+#
+# print(df_corr)
+# print(df.shape)
+#
+# print(df_corr.loc['Valeur fonciere'])

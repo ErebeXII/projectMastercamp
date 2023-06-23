@@ -6,7 +6,6 @@ def remplace_text(df,col):
     t = list(df[col].unique())
     if 0 in t:
         t[t.index(0)], t[0] = t[0], t[t.index(0)]
-    print(t)
     df[col] = df[col].map(t.index)
     return df
 
