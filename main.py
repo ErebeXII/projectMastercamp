@@ -50,9 +50,9 @@ def create_global_csv(path):
 
     df.to_csv(path, sep='|', encoding='utf-8', header=True, index=False)
 
-create_global_csv(r'C:\Users\meder\Desktop\chromedriver\VFglobal.csv')
+create_global_csv(r'C:\Users\nothy\PycharmProjects\projectMastercamp\VFglobal.csv')
 
-df = pd.read_csv("C:\\Users\\meder\Desktop\\chromedriver\\VFglobal.csv", sep='|', header=0, low_memory=False)
+df = pd.read_csv("C:\\Users\\nothy\\PycharmProjects\\projectMastercamp\\VFglobal.csv", sep='|', header=0, low_memory=False)
 print(df.info())
 df_corr = df.corr()
 print("grande correlation", df_corr.unstack()[(df_corr.unstack() < 1)].nlargest(20))
