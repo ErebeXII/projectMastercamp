@@ -16,7 +16,7 @@ def create_global_csv(path):
         filename = f"valeursfoncieres-20{i}.txt"
         columns_to_drop = ['Identifiant de document', 'Reference document', '1 Articles CGI', '2 Articles CGI',
                            '3 Articles CGI',
-                           '4 Articles CGI', '5 Articles CGI', 'Code voie', 'Voie', 'Commune','Code departement',
+                           '4 Articles CGI','B/T/Q', '5 Articles CGI', 'Code voie', 'Voie', 'Commune','Code departement',
                            'Identifiant local','Type local']
         chunk = pd.read_csv(filename, sep='|', header=0, low_memory=False)
         # drop unwanted columns
@@ -31,10 +31,10 @@ def create_global_csv(path):
     # Concatenate the chunks into a single DataFrame
     print("Cleaning non numeric values...")
     df = pd.concat(chunks)
-    df = df.fillna(0)
+    #df = df.fillna(0)
 
     for col in ['Type de voie', 'Nature mutation', 'Nature culture',
-                'Nature culture speciale', 'B/T/Q', 'Section']:
+                'Nature culture speciale', 'Section']:
         df = remplace_text(df, col)
 
     for col in ['No Volume', '1er lot',
@@ -46,11 +46,12 @@ def create_global_csv(path):
          df = string_to_float_number(df, col)
 
     df = remplace_date(df)
-
+    df = df.fillna(0)
     df.to_csv(path, sep='|', encoding='utf-8', header=True, index=False)
     print("Global csv created !")
 
-path = r'C:\Users\timot\OneDrive\Documents\L3\machine_learning\projectMastercamp\VFglobal.csv'
+
+path = r'C:\Users\meder\PycharmProjects\projectMastercamp2\VFglobal.csv'
 
 if not os.path.exists(path):
     create_global_csv(path)

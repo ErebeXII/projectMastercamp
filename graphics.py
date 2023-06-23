@@ -24,5 +24,4 @@ def plot_corr(df, prec=0.8):
     plt.yticks(range(len(corr.columns)), corr.columns)
     # make the plot more readable
     plt.tight_layout()
-
     plt.show()
