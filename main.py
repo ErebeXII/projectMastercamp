@@ -38,7 +38,7 @@ def create_global_csv(path, txt_path=""):
 
     for col in ['Type de voie', 'Nature mutation', 'Nature culture',
                 'Nature culture speciale', 'Section', 'Type local', '1er lot',
-                'Prefixe de section']:
+                'Prefixe de section', 'Code departement']:
         df = remplace_text(df, col)
 
     for col in ['No Volume', 'No voie']:
@@ -82,7 +82,7 @@ def create_year_csv(path, year, txt_path=""):
 
     for col in ['Type de voie', 'Nature mutation', 'Nature culture',
                 'Nature culture speciale', 'Section', 'Type local', '1er lot',
-                'Prefixe de section']:
+                'Prefixe de section','Code departement']:
         df = remplace_text(df, col)
 
     for col in ['No Volume', 'No voie']:
