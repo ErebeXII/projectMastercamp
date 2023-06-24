@@ -33,6 +33,8 @@ data['Type de voie'] = data['Type de voie'].replace(median_dict)
 corr_matrix = data.corr()
 print(corr_matrix)
 
+print(data)
+
 # plot the correlation matrix
 plt.plot(corr_matrix)
 

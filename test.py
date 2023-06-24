@@ -1,60 +1,33 @@
 import pandas as pd
-from clear_data import string_to_float_number
+from scipy.stats import chi2_contingency
+import matplotlib.pyplot as plt
+
 
 df = pd.read_csv("VFglobal.csv", sep='|', header=0, low_memory=False)
 
-#print(df['Surface Carrez du 1er lot'])
-df['Surface Carrez du 1er lot'] = df['Surface Carrez du 1er lot'].fillna(0)
-df['Surface Carrez du 2eme lot'] = df['Surface Carrez du 1er lot'].fillna(0)
-df['Surface Carrez du 3eme lot'] = df['Surface Carrez du 1er lot'].fillna(0)
-df['Surface Carrez du 4eme lot'] = df['Surface Carrez du 1er lot'].fillna(0)
-df['Surface Carrez du 5eme lot'] = df['Surface Carrez du 1er lot'].fillna(0)
+# Filtrer les types de voie qui ont moins de 1000 occurrences
+min_occurrences = 10000
+filtered_df = df.groupby('Type de voie').filter(lambda x: len(x) >= min_occurrences)
 
-df['Sum Surface Carrez'] = df['Surface Carrez du 1er lot'] + df['Surface Carrez du 2eme lot'] + df['Surface Carrez du 3eme lot'] +df['Surface Carrez du 4eme lot'] + df['Surface Carrez du 5eme lot']
+# Création d'une table de contingence entre le type de voie et la valeur foncière
+contingency_table = pd.crosstab(df['Type de voie'], df['Valeur fonciere'])
 
-print(df['Surface Carrez du 1er lot'])
-print(df['Surface Carrez du 2eme lot'])
-print(df['Surface Carrez du 3eme lot'])
-print(df['Surface Carrez du 4eme lot'])
-print(df['Surface Carrez du 5eme lot'])
-print(df['Sum Surface Carrez'])
-print(df['Surface reelle bati'])
+# Test du chi carré
+chi2, p_value, _, _ = chi2_contingency(contingency_table)
 
-if (df['Sum Surface Carrez'] + df['Surface reelle bati']).eq(0).all():
-    df['Prix Surface Carre'] = 0
+alpha = 0.05  # Seuil de significativité
+
+if p_value < alpha:
+    print("Il existe une corrélation entre le type de voie et la valeur foncière.")
 else:
-    df['Prix Surface Carre'] = 1
+    print("Il n'existe pas de corrélation significative entre le type de voie et la valeur foncière.")
 
-print(df['Prix Surface Carre'])
+# Calcul des moyennes de valeur foncière pour chaque type de voie
+mean_values = df.groupby('Type de voie')['Valeur fonciere'].median()
 
-
-"""
-cpt = 0
-if (df['Valeur fonciere']).eq(0).all():
-    cpt = cpt + 1
-
-print(cpt)
-"""
-
-"""
-if (df['Sum Surface Carrez'] + df['Surface reelle bati']).eq(0).all():
-    df['Prix Surface Carre'] = 0
-elif df['Sum Surface Carrez'].eq(0).all():
-    df['Prix Surface Carre'] = df['Valeur fonciere'] / df['Surface reelle bati']
-else:
-    df['Prix Surface Carre'] = df['Valeur fonciere'] / df['Sum Surface Carrez']
-
-print(df['Prix Surface Carre'])
-"""
-
-
-"""
-sum = df['Surface Carrez du 1er lot'] + df['Surface Carrez du 2eme lot'] + df['Surface Carrez du 3eme lot'] + df['Surface Carrez du 4eme lot'] + df['Surface Carrez du 5eme lot']
-
-if sum.sum() == 0:
-    df['Prix Surface Carre'] = df['Valeur fonciere'] / df['Surface reelle bati']
-else:
-    df['Prix Surface Carre'] = df['Valeur fonciere'] / sum
-
-print(df['Prix Surface Carre'])
-"""
+# Création du diagramme en barres
+plt.bar(mean_values.index, mean_values.values)
+plt.xlabel('Type de voie')
+plt.ylabel('Valeur foncière moyenne')
+plt.title('Corrélation entre le type de voie et la valeur foncière')
+plt.show()

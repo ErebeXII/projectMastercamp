@@ -6,6 +6,7 @@ import pandas as pd
 
 
 def remplace_text(df,col):
+    df[col] = df[col].fillna(0)
     dict = {}
     t = list(df[col].unique())
     if 0 in t:
@@ -28,10 +29,8 @@ def remplace_date(df):
 
 def string_to_float_number(df, col):
     df[col] = df[col].fillna("0,0")
-    print(df[col])
     df[col] = df[col].str.replace(',', '.')
     df[col] = df[col].apply(lambda x: float(x) if x != '0' else 0)
-    print(df[col])
     return df
 
 
