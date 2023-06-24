@@ -39,7 +39,7 @@ def create_global_csv(path):
                 'Nature culture speciale', 'Section', 'Type local']:
         df = remplace_text(df, col)
 
-    for col in ['No Volume']:
+    for col in ['No Volume', 'No voie']:
         df = string_to_int(df, col)
 
     for col in ['Valeur fonciere', 'Surface Carrez du 1er lot', 'Surface Carrez du 2eme lot',

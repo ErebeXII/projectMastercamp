@@ -2,30 +2,30 @@ import pandas as pd
 from scipy.stats import chi2_contingency
 import matplotlib.pyplot as plt
 
-
 df = pd.read_csv("VFglobal.csv", sep='|', header=0, low_memory=False)
 
-# Filtrer les types de voie qui ont moins de 1000 occurrences
-min_occurrences = 10000
-filtered_df = df.groupby('No voie').filter(lambda x: len(x) >= min_occurrences)
+# Create a subset of the DataFrame with street numbers that appear at least 1000 times
+street_counts = df['No voie'].value_counts()
+valid_street_numbers = street_counts[street_counts >= 1000].index
+filtered_df = df[df['No voie'].isin(valid_street_numbers)]
 
-# Création d'une table de contingence entre le type de voie et la valeur foncière
-contingency_table = pd.crosstab(df['No voie'], df['Valeur fonciere'])
+# Create the contingency table between street number and property value
+contingency_table = pd.crosstab(filtered_df['No voie'], filtered_df['Valeur fonciere'])
 
-# Test du chi carré
+# Perform the chi-square test
 chi2, p_value, _, _ = chi2_contingency(contingency_table)
 
-alpha = 0.05  # Seuil de significativité
+alpha = 0.05  # Significance level
 
 if p_value < alpha:
     print("Il existe une corrélation entre le numéro voie et la valeur foncière.")
 else:
     print("Il n'existe pas de corrélation significative entre le numéro voie et la valeur foncière.")
 
-# Calcul des moyennes de valeur foncière pour chaque type de voie
-mean_values = df.groupby('No voie')['Valeur fonciere'].median()
+# Calculate the median property value for each street number
+mean_values = filtered_df.groupby('No voie')['Valeur fonciere'].median()
 
-# Création du diagramme en barres
+# Create the bar chart
 plt.bar(mean_values.index, mean_values.values)
 plt.xlabel('No voie')
 plt.ylabel('Valeur foncière moyenne')
