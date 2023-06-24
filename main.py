@@ -5,6 +5,7 @@ import os
 import graphics
 import create_square_meter_price
 
+
 def create_global_csv(path, txt_path=""):
     print("Creating global csv...")
     # Initialize an empty list
@@ -12,15 +13,14 @@ def create_global_csv(path, txt_path=""):
 
     # Iterate over the files and append chunks to the list
     for i in range(18, 23):
-
         print(f"Processing file: valeursfoncieres-20{i}.txt")
 
         filename = f"{txt_path}valeursfoncieres-20{i}.txt"
 
-        columns_to_drop = ['Identifiant de document','Reference document','1 Articles CGI','2 Articles CGI',
-                           '3 Articles CGI','4 Articles CGI','5 Articles CGI','Code voie',
-                           'Voie','Commune', 'Code postal' ,'Code commune', 'Code type local',
-                         '2eme lot', '3eme lot', '4eme lot', '5eme lot', 'B/T/Q', 'No plan']
+        columns_to_drop = ['Identifiant de document', 'Reference document', '1 Articles CGI', '2 Articles CGI',
+                           '3 Articles CGI', '4 Articles CGI', '5 Articles CGI', 'Code voie',
+                           'Voie', 'Commune', 'Code postal', 'Code commune', 'Code type local',
+                           '2eme lot', '3eme lot', '4eme lot', '5eme lot', 'B/T/Q', 'No plan']
         chunk = pd.read_csv(filename, sep='|', header=0, low_memory=False)
         # drop unwanted columns
         chunk.drop(columns_to_drop, axis=1, inplace=True)
@@ -34,7 +34,7 @@ def create_global_csv(path, txt_path=""):
     # Concatenate the chunks into a single DataFrame
     print("Cleaning non numeric values...")
     df = pd.concat(chunks)
-    #df = df.fillna(0)
+    # df = df.fillna(0)
 
     for col in ['Type de voie', 'Nature mutation', 'Nature culture',
                 'Nature culture speciale', 'Section', 'Type local', '1er lot',
@@ -46,7 +46,7 @@ def create_global_csv(path, txt_path=""):
 
     for col in ['Valeur fonciere', 'Surface Carrez du 1er lot', 'Surface Carrez du 2eme lot',
                 'Surface Carrez du 3eme lot', 'Surface Carrez du 4eme lot', 'Surface Carrez du 5eme lot']:
-         df = string_to_float_number(df, col)
+        df = string_to_float_number(df, col)
 
     df = remplace_date(df)
     df = df.fillna(0)
@@ -56,13 +56,14 @@ def create_global_csv(path, txt_path=""):
     df.to_csv(path, sep='|', encoding='utf-8', header=True, index=False)
     print("Global csv created !")
 
-def create_2022_csv(path, txt_path=""):
+
+def create_year_csv(path, year, txt_path=""):
     # Initialize an empty list
     chunks = []
 
-    print(f"Processing file: valeursfoncieres-2022.txt")
+    print(f"Processing file: valeursfoncieres-{year}.txt")
 
-    filename = f"{txt_path}valeursfoncieres-2022.txt"
+    filename = f"{txt_path}valeursfoncieres-{year}.txt"
 
     columns_to_drop = ['Identifiant de document', 'Reference document', '1 Articles CGI', '2 Articles CGI',
                        '3 Articles CGI', '4 Articles CGI', '5 Articles CGI', 'Code voie',
@@ -99,8 +100,9 @@ def create_2022_csv(path, txt_path=""):
     df.to_csv(path, sep='|', encoding='utf-8', header=True, index=False)
     print("2022 csv created !")
 
-#path = r'C:\Users\meder\PycharmProjects\projectMastercamp2\VFglobal.csv'
-#path = r'C:\Users\nothy\PycharmProjects\projectMastercamp\VFglobal.csv'
+
+# path = r'C:\Users\meder\PycharmProjects\projectMastercamp2\VFglobal.csv'
+# path = r'C:\Users\nothy\PycharmProjects\projectMastercamp\VFglobal.csv'
 path = r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\VFglobal.csv'
 
 if not os.path.exists(path):
@@ -111,8 +113,7 @@ if not os.path.exists(path):
 path = r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\2022.csv'
 
 if not os.path.exists(path):
-    create_2022_csv(path, txt_path="C:\\Users\\timot\\Documents\\Python\\Project_Mastercamp_DS\\")
-
+    create_year_csv(path, 2022, txt_path="C:\\Users\\timot\\Documents\\Python\\Project_Mastercamp_DS\\")
 
 # df = pd.read_csv(path, sep='|', header=0, low_memory=False)
 # graphics.plot_corr(df, 0.3)
