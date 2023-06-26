@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
 
 
 def plot_corr(df, prec=0.8):
@@ -25,3 +26,48 @@ def plot_corr(df, prec=0.8):
     # make the plot more readable
     plt.tight_layout()
     plt.show()
+
+def plotPredictedValues(path, n_samples=1000):
+    df = pd.read_csv(path, sep=',', header=0, low_memory=False)
+
+    # take random n_samples rows from the dataframe
+    # if the dataframe has less than n_samples rows, we take all the rows
+    if df.shape[0] < n_samples:
+        n_samples = df.shape[0]
+    else:
+        df = df.sample(n=n_samples)
+
+    # plot the "Valeur fonciere" on the x-axis and the predicted values on the y-axis with a red line
+    plt.figure(figsize=(20, 10))
+    plt.plot(df['Valeur fonciere'], df['Predicted'], 'ro')
+    plt.xlabel('Valeur fonciere')
+    plt.ylabel('Predicted')
+    plt.title(f'Actual vs Predicted ({n_samples} samples)')
+    # plot a regression line
+    plt.plot(np.unique(df['Valeur fonciere']), np.poly1d(np.polyfit(df['Valeur fonciere'], df['Predicted'], 1)) \
+    (np.unique(df['Valeur fonciere'])), color='black')
+    # plot a dashed line of slope 1
+    plt.plot(np.unique(df['Valeur fonciere']), np.unique(df['Valeur fonciere']), linestyle='--', color='blue', label='Ideal model')
+    # add the legend
+    plt.legend(['Predicted', 'Regression line', 'Ideal model'])
+
+
+    # plot the difference between the two
+
+    plt.figure(figsize=(20, 10))
+    plt.plot(df['Valeur fonciere'], df['Difference'], 'ro')
+    plt.xlabel('Valeur fonciere')
+    plt.ylabel('Difference')
+    plt.title(f'Difference between Actual and Predicted ({n_samples} samples)')
+
+    # plot regression line
+    plt.plot(np.unique(df['Valeur fonciere']), np.poly1d(np.polyfit(df['Valeur fonciere'], df['Difference'], 1)) \
+    (np.unique(df['Valeur fonciere'])), color='black')
+    # plot a dashed line of slope 0
+    plt.plot(np.unique(df['Valeur fonciere']), np.zeros(len(np.unique(df['Valeur fonciere']))), linestyle='--', color='blue', label='Ideal model')
+    # add the legend
+    plt.legend(['Difference', 'Regression line', 'Ideal model'])
+
+    plt.show()
+
+

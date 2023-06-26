@@ -102,8 +102,8 @@ def create_year_csv(path, year, txt_path=""):
 
 
 # path = r'C:\Users\meder\PycharmProjects\projectMastercamp2\VFglobal.csv'
-path = r'C:\Users\nothy\PycharmProjects\projectMastercamp\VFglobal.csv'
-#path = r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\VFglobal.csv'
+#path = r'C:\Users\nothy\PycharmProjects\projectMastercamp\VFglobal.csv'
+path = r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\VFglobal.csv'
 
 if not os.path.exists(path):
     # txt_path is only needed if the txt files are not in the same folder as the script
@@ -112,11 +112,11 @@ if not os.path.exists(path):
     create_global_csv(path)
 
 path = r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\2022.csv'
-path2 = r'C:\Users\nothy\PycharmProjects\projectMastercamp\VF2022.csv'
+#path2 = r'C:\Users\nothy\PycharmProjects\projectMastercamp\VF2022.csv'
 
-if not os.path.exists(path2):
+if not os.path.exists(path):
     #create_year_csv(path, 2018, txt_path="C:\\Users\\timot\\Documents\\Python\\Project_Mastercamp_DS\\")
-    create_year_csv(path2, 2022)
+    create_year_csv(path, 2022)
 
 # df = pd.read_csv(path, sep='|', header=0, low_memory=False)
 # graphics.plot_corr(df, 0.3)
@@ -129,3 +129,6 @@ if not os.path.exists(path2):
 # print(df.shape)
 #
 # print(df_corr.loc['Valeur fonciere'])
+
+graphics.plotPredictedValues(r"C:\Users\timot\Documents\Python\Project_Mastercamp_DS\VFglobal_predicted_RandomForestRegressor.csv"
+                             ,10000000)

@@ -1,3 +1,5 @@
+import os.path
+
 import sklearn as sk
 import pandas as pd
 import numpy as np
@@ -34,8 +36,8 @@ import matplotlib.pyplot as plt
 def modelTraining(path, cols):
 
     # we create df with the columns we want
-    # timothé path : C:\Users\timot\Documents\Python\Project_Mastercamp_DS\VFglobal.csv
-    print(f"Training on {path}")
+    # print the part after the last \ of the path
+    print("Training model on " + path.split("\\")[-1] + " ...")
     df = pd.read_csv(path, usecols=cols, sep='|', header=0, low_memory=False)
 
     # Handling missing values
@@ -48,7 +50,7 @@ def modelTraining(path, cols):
     # RandomForestRegressor() is the best model but it takes a lot of time to run
 
     # limit the time of training for random forest
-    rf = RandomForestRegressor(n_estimators=10, random_state=42)
+    rf = RandomForestRegressor(n_estimators=10,random_state=42)
 
     # cluster models, very poor prediction
     # KMeans(n_clusters=5)
@@ -94,7 +96,20 @@ def modelTraining(path, cols):
         # print the time of training
         print("Training time: %s seconds" % (time.time() - start_time))
 
-    return 0
+    # path to save the csv file is made from path but without the .csv
+    path_to_save = path[:-4] + "_predicted_"
+    # add the name of the model to the path without the extension
+    path_to_save = path_to_save + str(model).split('(')[0] + '.csv'
+
+    # if the file at path_to_save exists, we delete it
+    if os.path.exists(path_to_save):
+        os.remove(path_to_save)
+
+    # create a new dataframe with the "Valeur fonciere" of the test set, the actual values and the predicted values
+    df_pred = pd.DataFrame({'Valeur fonciere': y_test, 'Predicted': y_pred, 'Difference': y_test - y_pred})
+
+    # create csv file with the predicted values with the name of the model
+    df_pred.to_csv(path_to_save, index=False)
 
 
 def determineClusterNumber(path, cols):
@@ -109,19 +124,19 @@ def determineClusterNumber(path, cols):
                                                         df['Valeur fonciere'], test_size=0.2, random_state=0)
 
     # Elbow method
-    max_clusters = 20
+    max_clusters = 10
     elbow_scores = []
     silhouette_scores = []
 
     for n_clusters in range(1, max_clusters + 1):
         start_time = time.time()
-        kmeans = KMeans(n_clusters=n_clusters, init='k-means++', random_state=42)
-        kmeans.fit(X_train)
+        model = KMeans(n_clusters=n_clusters)
+        model.fit(X_train)
 
         # Calculate WCSS (Within-Cluster Sum of Squares)
         wcss = kmeans.inertia_
         elbow_scores.append(wcss)
-        print(f"Training for {n_clusters} clusters, training time: {time.time() - start_time} seconds")
+        print(f"{model}\nTraining for {n_clusters} clusters\nTraining time: {time.time() - start_time} seconds")
 
     # Plot Elbow method
     plt.plot(range(1, max_clusters + 1), elbow_scores)
@@ -140,6 +155,6 @@ cols = ['No disposition', 'Date mutation', 'Nature mutation', 'Valeur fonciere',
 # r'C:\Users\timot\Documents\Python\Project_Mastercamp_DSVFglobal.csv'
 # r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\2022.csv'
 
-modelTraining(r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\2022.csv',cols)
+modelTraining(r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\VFglobal.csv',cols)
 
 #determineClusterNumber(r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\2022.csv',cols )
