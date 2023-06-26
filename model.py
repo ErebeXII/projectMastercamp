@@ -82,5 +82,6 @@ cols = ['No disposition', 'Date mutation', 'Nature mutation', 'Valeur fonciere',
 
 # r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\VFglobal.csv'
 # r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\2022.csv'
+# r'C:\Users\nothy\PycharmProjects\projectMastercamp\VFglobal.csv'
 
-modelTraining(r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\2022.csv',cols)
+modelTraining(r'C:\Users\nothy\PycharmProjects\projectMastercamp\VF2018.csv',cols)
