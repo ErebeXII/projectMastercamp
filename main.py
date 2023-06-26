@@ -67,8 +67,9 @@ def create_year_csv(path, year, txt_path=""):
 
     columns_to_drop = ['Identifiant de document', 'Reference document', '1 Articles CGI', '2 Articles CGI',
                        '3 Articles CGI', '4 Articles CGI', '5 Articles CGI', 'Code voie',
-                       'Voie', 'Commune', 'Code postal', 'Code commune', 'Code type local',
-                       '2eme lot', '3eme lot', '4eme lot', '5eme lot', 'B/T/Q', 'No plan']
+                       'Voie', 'Code postal', 'Code commune', 'Code type local',
+                       '2eme lot', '3eme lot', '4eme lot', '5eme lot', 'B/T/Q', 'No plan', 'No voie', 'Section',
+                       '1er lot', 'Prefixe de section']
     df = pd.read_csv(filename, sep='|', header=0, low_memory=False)
     # drop unwanted columns
     df.drop(columns_to_drop, axis=1, inplace=True)
@@ -81,11 +82,10 @@ def create_year_csv(path, year, txt_path=""):
     print("Cleaning non numeric values...")
 
     for col in ['Type de voie', 'Nature mutation', 'Nature culture',
-                'Nature culture speciale', 'Section', 'Type local', '1er lot',
-                'Prefixe de section','Code departement']:
+                'Nature culture speciale','Type local', 'Code departement', 'Commune']:
         df = remplace_text(df, col)
 
-    for col in ['No Volume', 'No voie']:
+    for col in ['No Volume']:
         df = string_to_int(df, col)
 
     for col in ['Valeur fonciere', 'Surface Carrez du 1er lot', 'Surface Carrez du 2eme lot',
@@ -98,22 +98,25 @@ def create_year_csv(path, year, txt_path=""):
     create_square_meter_price.create(df)
 
     df.to_csv(path, sep='|', encoding='utf-8', header=True, index=False)
-    print("2022 csv created !")
+    print(f"{year} csv created !")
 
 
 # path = r'C:\Users\meder\PycharmProjects\projectMastercamp2\VFglobal.csv'
-# path = r'C:\Users\nothy\PycharmProjects\projectMastercamp\VFglobal.csv'
-path = r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\VFglobal.csv'
+path = r'C:\Users\nothy\PycharmProjects\projectMastercamp\VFglobal.csv'
+#path = r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\VFglobal.csv'
 
 if not os.path.exists(path):
     # txt_path is only needed if the txt files are not in the same folder as the script
     # txt_path="C:\\Users\\timot\\Documents\\Python\\Project_Mastercamp_DS\\
-    create_global_csv(path, txt_path="C:\\Users\\timot\\Documents\\Python\\Project_Mastercamp_DS\\")
+    #create_global_csv(path, txt_path="C:\\Users\\timot\\Documents\\Python\\Project_Mastercamp_DS\\")
+    create_global_csv(path)
 
 path = r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\2022.csv'
+path2 = r'C:\Users\nothy\PycharmProjects\projectMastercamp\VF2022.csv'
 
-if not os.path.exists(path):
-    create_year_csv(path, 2022, txt_path="C:\\Users\\timot\\Documents\\Python\\Project_Mastercamp_DS\\")
+if not os.path.exists(path2):
+    #create_year_csv(path, 2018, txt_path="C:\\Users\\timot\\Documents\\Python\\Project_Mastercamp_DS\\")
+    create_year_csv(path2, 2022)
 
 # df = pd.read_csv(path, sep='|', header=0, low_memory=False)
 # graphics.plot_corr(df, 0.3)
