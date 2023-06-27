@@ -134,6 +134,14 @@ if not os.path.exists(path_appart):
 # print(df.shape)
 #
 # print(df_corr.loc['Valeur fonciere'])
-path3 = r"C:\Users\timot\Documents\Python\Project_Mastercamp_DS\VFglobal_predicted_RandomForestRegressor.csv"
+path3 = r"C:\Users\timot\Documents\Python\Project_Mastercamp_DS\appart_predicted_51.csv"
 if os.path.exists(path3):
     graphics.plotPredictedValues(path3, 1000000)
+
+path4 = r"C:\Users\timot\Documents\Python\Project_Mastercamp_DS\appart_predicted_03.csv"
+if os.path.exists(path4):
+    graphics.plotPredictedValues(path4, 1000000)
+
+path5 = r"C:\Users\timot\Documents\Python\Project_Mastercamp_DS\appart_predicted_59.csv"
+if os.path.exists(path5):
+    graphics.plotPredictedValues(path5, 1000000)

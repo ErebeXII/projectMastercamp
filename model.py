@@ -49,12 +49,12 @@ def modelTraining(path, cols):
     # RandomForestRegressor() is the best model but it takes a lot of time to run
 
     # limit the time of training for random forest
-    rf = RandomForestRegressor(n_estimators=100,random_state=42)
+    rf = RandomForestRegressor(n_estimators=50,random_state=42)
 
     # cluster models, very poor prediction
     # KMeans(n_clusters=5)
 
-    models = [DecisionTreeRegressor(), GradientBoostingRegressor(), LinearRegression(), MLPRegressor(), Ridge(), SVR(), rf]
+    models = [LinearRegression(), Ridge(),DecisionTreeRegressor(), GradientBoostingRegressor(), rf]
 
 
     # we split the data with "valeur-fonciere" as target
@@ -154,11 +154,19 @@ def modelTrainingPerDepartement(path, cols):
     rf = RandomForestRegressor(n_estimators=100,random_state=42)
     # Determine which departements have the best prediction by R^2 score
     departements = df['Code departement'].unique()
-    # drop the departement with less than 10000 rows
+
+    rows_to_drop = []
+    dpt_to_drop = []
     for departement in departements:
         if len(df[df['Code departement'] == departement]) < 10000:
-            df.drop(df[df['Code departement'] == departement].index, inplace=True)
+            if departement not in dpt_to_drop:
+                dpt_to_drop.append(departement)
+            rows_to_drop.extend(df[df['Code departement'] == departement].index) # cannot drop rows while iterating over the dataframe
+
+    df.drop(rows_to_drop, inplace=True)
     departements = df['Code departement'].unique()
+    # print unique departements in dpt_to_drop
+    print("__________________________________________________")
 
     best_R2_per_dpt = [] # [(departement, R^2)]
     with open('./Code departement.json') as json_file: # to translate the departement code to the name
@@ -176,34 +184,48 @@ def modelTrainingPerDepartement(path, cols):
         # we calculate R^2
         score = rf.score(X_test, y_test)
         # if the R^2 is better than the previous one, we keep it
-        best_R2_per_dpt.append((str(departement), score))
+        best_R2_per_dpt.append((str(departement), score, len(df_dpt)))
 
     # we sort the list by R^2 score
     best_R2_per_dpt.sort(key=lambda x: x[1], reverse=True)
-    print(best_R2_per_dpt)
+
     dpt = best_R2_per_dpt[0][0]
 
-    print("Best R^2 score is for departement " + str(dpt) + " with a score of " + str(best_R2_per_dpt[0][1]) +"\n"
-                                                    + "With " + str(len(df[df['Code departement'] == dpt])) + " rows")
+    sorted_perRows = sorted(best_R2_per_dpt, key=lambda x: x[2], reverse=True)
+    # print sorted list by R^2 score & rows
+    print("Sorted by R^2 score: ")
+    print(best_R2_per_dpt)
+    print("Sorted by rows: ")
+    print(sorted_perRows)
+
+    print("Best R^2 score is for departement " + data[dpt] + " with a score of " + str(best_R2_per_dpt[0][1]) +"\n"
+                                                    + "With " + str(best_R2_per_dpt[0][2]) + " rows")
+    # print RMSE
+    print("RMSE: " + str(np.sqrt(mean_squared_error(y_test, rf.predict(X_test), squared=False))))
+    # print spearman correlation
+    print("Spearman correlation: " + str(stats.spearmanr(y_test, rf.predict(X_test))))
 
 
-    # Redo the training with the best departement to store in a csv file
-    df_dpt = df[df['Code departement'] == best_R2_per_dpt[0][0]]
-    print(df_dpt)
-    # we split the data with "valeur-fonciere" as target
-    X_train, X_test, y_train, y_test = train_test_split(df_dpt.drop('Valeur fonciere', axis=1),
-                                                        df_dpt['Valeur fonciere'], test_size=0.2, random_state=0)
-    # we fit the model
-    rf.fit(X_train, y_train)
-    # we predict the data
-    y_pred = rf.predict(X_test)
-    # we save in a csv file
-    path_to_save = path[:-4] + "_predicted_" + str(dpt) + '.csv'
-    # if the file at path_to_save exists, we delete it
-    if os.path.exists(path_to_save):
-        os.remove(path_to_save)
-    # create a new dataframe with the "Valeur fonciere" of the test set, the actual values and the predicted values
-    df_pred = pd.DataFrame({'Valeur fonciere': y_test, 'Predicted': y_pred, 'Difference': y_test - y_pred})
+    # Redo the training with the best departement to store in a csv file for the 3 first
+    for i in range(3):
+        # create a dataframe with only the departement
+        df_dpt = df[df['Code departement'] == int(best_R2_per_dpt[i][0])]
+        # we split the data with "valeur-fonciere" as target
+        X_train, X_test, y_train, y_test = train_test_split(df_dpt.drop('Valeur fonciere', axis=1),
+                                                            df_dpt['Valeur fonciere'], test_size=0.2, random_state=0)
+        # we fit the model
+        rf.fit(X_train, y_train)
+        # we predict the data
+        y_pred = rf.predict(X_test)
+        # we save in a csv file
+        path_to_save = path[:-4] + "_predicted_" + data[best_R2_per_dpt[i][0]] + '.csv'
+        # if the file at path_to_save exists, we delete it
+        if os.path.exists(path_to_save):
+            os.remove(path_to_save)
+        # create a dataframe with the initial data and the predicted values and difference
+        df_pred = pd.DataFrame({'Valeur fonciere': y_test, 'Predicted': y_pred, 'Difference': y_test - y_pred})
+        df_pred.to_csv(path_to_save, sep='|', index=False)
+        print("Saved file " + path_to_save)
 
 
 
@@ -216,8 +238,8 @@ cols = ['No disposition', 'Date mutation', 'Nature mutation', 'Valeur fonciere',
 # r'C:\Users\timot\Documents\Python\Project_Mastercamp_DSVFglobal.csv'
 # r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\2022.csv'
 
-#modelTraining(r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\appart.csv',cols)
+modelTraining(r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\appart.csv',cols)
 
 #determineClusterNumber(r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\2022.csv',cols )
 
-modelTrainingPerDepartement(r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\appart.csv',cols)
+#modelTrainingPerDepartement(r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\appart.csv',cols)
