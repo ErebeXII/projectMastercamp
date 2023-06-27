@@ -4,7 +4,7 @@ from clear_data import remplace_text, remplace_date, string_to_float_number, str
 import os
 import graphics
 import create_square_meter_price
-
+import csv_appart
 
 def create_global_csv(path, txt_path=""):
     print("Creating global csv...")
@@ -109,14 +109,19 @@ if not os.path.exists(path):
     # txt_path is only needed if the txt files are not in the same folder as the script
     # txt_path="C:\\Users\\timot\\Documents\\Python\\Project_Mastercamp_DS\\
     #create_global_csv(path, txt_path="C:\\Users\\timot\\Documents\\Python\\Project_Mastercamp_DS\\")
-    create_global_csv(path)
+    create_global_csv(path, txt_path="C:\\Users\\timot\\Documents\\Python\\Project_Mastercamp_DS\\")
 
-path = r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\2022.csv'
+path2 = r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\2022.csv'
 #path2 = r'C:\Users\nothy\PycharmProjects\projectMastercamp\VF2022.csv'
+#
+# if not os.path.exists(path2):
+#     create_year_csv(path, 2022, txt_path="C:\\Users\\timot\\Documents\\Python\\Project_Mastercamp_DS\\")
+#     #create_year_csv(path, 2022)
 
-if not os.path.exists(path):
-    #create_year_csv(path, 2018, txt_path="C:\\Users\\timot\\Documents\\Python\\Project_Mastercamp_DS\\")
-    create_year_csv(path, 2022)
+path_appart = r'C:\Users\timot\Documents\Python\Project_Mastercamp_DS\appart.csv'
+
+if not os.path.exists(path_appart):
+    csv_appart.appart(path, path_appart=path_appart)
 
 # df = pd.read_csv(path, sep='|', header=0, low_memory=False)
 # graphics.plot_corr(df, 0.3)
@@ -129,6 +134,6 @@ if not os.path.exists(path):
 # print(df.shape)
 #
 # print(df_corr.loc['Valeur fonciere'])
-
-graphics.plotPredictedValues(r"C:\Users\timot\Documents\Python\Project_Mastercamp_DS\VFglobal_predicted_RandomForestRegressor.csv"
-                             ,10000000)
+path3 = r"C:\Users\timot\Documents\Python\Project_Mastercamp_DS\VFglobal_predicted_RandomForestRegressor.csv"
+if os.path.exists(path3):
+    graphics.plotPredictedValues(path3, 1000000)

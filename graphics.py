@@ -30,6 +30,8 @@ def plot_corr(df, prec=0.8):
 def plotPredictedValues(path, n_samples=1000):
     df = pd.read_csv(path, sep=',', header=0, low_memory=False)
 
+    file_target = path.split("\\")[-1]
+    file_target = file_target.split(".")[0]
     # take random n_samples rows from the dataframe
     # if the dataframe has less than n_samples rows, we take all the rows
     if df.shape[0] < n_samples:
@@ -58,7 +60,7 @@ def plotPredictedValues(path, n_samples=1000):
     plt.plot(df['Valeur fonciere'], df['Difference'], 'ro')
     plt.xlabel('Valeur fonciere')
     plt.ylabel('Difference')
-    plt.title(f'Difference between Actual and Predicted ({n_samples} samples)')
+    plt.title(f'Difference between Actual and Predicted ({n_samples} samples) {file_target}')
 
     # plot regression line
     plt.plot(np.unique(df['Valeur fonciere']), np.poly1d(np.polyfit(df['Valeur fonciere'], df['Difference'], 1)) \
